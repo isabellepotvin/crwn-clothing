@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext } from 'react';
 
-import { onAuthStateChangedListener } from '../utils/firebase/firebase.utils';
+import { onAuthStateChangedListener, createUserDocumentFromAuth } from '../utils/firebase/firebase.utils';
 
 // actual value you want to access
 export const UserContext = createContext({
@@ -14,7 +14,12 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChangedListener((user) => {
+      if (user) {
+        createUserDocumentFromAuth(user);
+      }
+
       console.log(user);
+      setCurrentUser(user);
     });
 
     return unsubscribe; // unsubscribe() will run when this component unmounts. We need to do this to avoid a memory leak.
